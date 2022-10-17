@@ -1,0 +1,29 @@
+version: '3'
+
+volumes:
+  nextcloud:
+  db:
+
+services:
+  db:
+    image: mysql:8.0    
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD={yourSecretRootPassword}
+      - MYSQL_PASSWORD={yourSecretDBPassword}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    security_opt:
+      - seccomp:unconfined
+
+  app:
+    image: nextcloud:22
+    ports:
+      - 8085:80
+    links:
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+    restart: always
